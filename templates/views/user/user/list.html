@@ -1,0 +1,208 @@
+{% extends 'tpl/template.html' %}
+{% load static %}
+{% block main %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">ID</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="email" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-block">
+                            <select name="sex">
+                                <option value="0">不限</option>
+                                <option value="true">启用</option>
+                                <option value="false">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+                                lay-filter="LAY-user-front-search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <div style="padding-bottom: 10px;">
+                    <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+                </div>
+
+                <table id="LAY-user-manage" lay-filter="LAY-user-manage"></table>
+                <script type="text/html" id="imgTpl">
+                    <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+                </script>
+                <script type="text/html" id="table-useradmin-webuser">
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
+                            class="layui-icon layui-icon-edit"></i>编辑</a>
+                    {% verbatim %}
+                    {{#  if(d.status == '启用'){ }}
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="disable"><i
+                            class="layui-icon layui-icon-delete"></i>禁用</a>
+                    {{#  } else { }}
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="disable"><i
+                            class="layui-icon layui-icon-ok-circle"></i>启用</a>
+                    {{#  } }}
+                    {% endverbatim %}
+
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        layui.config({
+            base: '{% static 'layuiadmin/' %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table'], function () {
+            var $ = layui.$
+                , form = layui.form
+                , table = layui.table;
+
+            table.render({
+                elem: "#LAY-user-manage",
+                url: '/system/user/list',
+                cols: [[
+                    {type: "checkbox", fixed: "left"},
+                    {field: "id", width: 100, title: "ID", sort: !0},
+                    {field: "username", title: "用户名",},
+                    {field: "email", title: "邮箱",},
+                    {field: "phone", title: "手机"},
+                    {field: "status", title: "状态"},
+                    {field: "last_login", title: "最后登录"},
+                    {field: "joined_time", title: "加入时间"},
+                    {field: "desc", title: "备注"},
+                    {
+                        title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser"
+                    }]],
+                page: !0,
+                limit: 30,
+                height: "full-220",
+                text: "对不起，加载出现异常！"
+            });
+
+            //监听搜索
+            form.on('submit(LAY-user-front-search)', function (data) {
+                var field = data.field;
+
+                //执行重载
+                table.reload('LAY-user-manage', {
+                    where: field
+                });
+            });
+
+            //事件
+            var active = {
+                add: function () {
+                    layer.open({
+                        type: 2
+                        , title: '添加用户'
+                        , content: '{% static 'module/system/user/userAddForm.html' %}'
+                        , maxmin: true
+                        , area: ['500px', '450px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            var iframeWindow = window['layui-layer-iframe' + index]
+                                , submitID = 'LAY-user-front-submit'
+                                , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                            //监听提交
+                            iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                var field = data.field; //获取提交的字段
+                                //提交 Ajax 成功后，静态更新表格中的数据
+                                $.ajax({
+                                    url: '/system/user/add',
+                                    data: field,
+                                    method: 'post',
+                                    success: function (res) {
+                                        table.reload('LAY-user-manage')
+                                        layui.layer.msg('创建成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                layer.close(index); //关闭弹层
+                            });
+
+                            submit.trigger('click');
+                        }
+                    });
+                }
+            };
+
+            table.on("tool(LAY-user-manage)", function (e) {
+                e.data;
+                if ("disable" === e.event) {
+                    layer.confirm("确定执行该操作？", function (t) {
+                        e.del(), layer.close(t)
+                        let is_active = e.data.status
+                        if (is_active == '启用')
+                            is_active = false
+                        else
+                            is_active = true
+                        $.ajax({
+                            url: '/system/user/active/' + e.data.id,
+                            method: 'put',
+                            data: {'is_active': is_active},
+                            success: function (res) {
+                                table.reload('LAY-user-manage');
+                                layer.msg('操作成功');
+                            },
+                            error: function (res) {
+                                layer.msg(res.responseText);
+                            }
+                        })
+                    })
+                } else if ("edit" === e.event) {
+                    t(e.tr);
+                    layer.open({
+                        type: 2,
+                        title: "编辑用户",
+                        content: "{% static 'views/user/user/brandEditForm.html' %}",
+                        maxmin: !0,
+                        area: ["500px", "450px"],
+                        btn: ["确定", "取消"],
+                        yes: function (e, t) {
+                            var l = window["layui-layer-iframe" + e], r = "LAY-user-front-submit",
+                                n = t.find("iframe").contents().find("#" + r);
+                            l.layui.form.on("submit(" + r + ")", function (t) {
+                                t.field;
+                                i.reload("LAY-user-front-submit"), layer.close(e)
+                            }), n.trigger("click")
+                        },
+                        success: function (e, t) {
+                        }
+                    })
+                }
+            });
+
+            $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+    </script>
+{% endblock %}

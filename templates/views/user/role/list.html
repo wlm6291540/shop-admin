@@ -1,0 +1,287 @@
+{% extends 'tpl/template.html' %}
+{% load static %}
+{% block main %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="title" id="title" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+                                lay-filter="LAY-user-front-search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+
+
+                <div class="layui-row">
+                    <div class="layui-col-md12">
+                        <div style="padding-bottom: 10px;">
+                            <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+                            <!--<button class="layui-btn layui-btn-danger layuiadmin-btn-useradmin" data-type="batchdel">
+                                删除
+                            </button>-->
+                        </div>
+                        <table id="role" lay-hide lay-skin="line" lay-size="lg"
+                               lay-filter="role">
+                        </table>
+                    </div>
+                </div>
+                <script type="text/html" id="imgTpl">
+                    <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+                </script>
+                <script type="text/html" id="role-admin">
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
+                            class="layui-icon layui-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i
+                            class="layui-icon layui-icon-delete"></i>删除</a>
+                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="auth"><i
+                            class="layui-icon layui-icon-auz"></i>授权</a>
+                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="bind"><i
+                            class="layui-icon layui-icon-user"></i>绑定用户</a>
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        layui.config({
+            base: '{% static 'layuiadmin/' %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'tree', 'useradmin', 'table', 'admin'], function () {
+                var $ = layui.$
+                    , form = layui.form
+                    , admin = layui.admin
+                    , tree = layui.tree
+                    , table = layui.table;
+
+                table.render({
+                    id: 'role'
+                    , elem: '#role'
+                    , url: '/system/role/list' //数据接口
+                    , page: true //开启分页
+                    , limit: 10
+                    , cols: [[ //表头
+                        {type: 'checkbox'}
+                        , {field: 'id', title: 'ID', sort: true}
+                        , {field: 'name', title: '角色名', sort: true}
+                        , {field: 'desc', title: '备注', sort: true}
+                        , {title: '操作', fixed: 'right', align: 'center', toolbar: '#role-admin'}
+                    ]]
+                });
+                //监听搜索
+                form.on('submit(LAY-user-front-search)', function (data) {
+                    var field = data.field;
+
+                    //执行重载
+                    table.reload('role', {
+                        where: field
+                    });
+                });
+
+                table.on('tool(role)', function (obj) {
+                    var data = obj.data;
+                    var layEvent = obj.event;
+                    var tr = obj.tr;
+                    switch (obj.event) {
+                        case 'del':
+                            layer.confirm('真的删除行么', function (index) {
+                                $.ajax({
+                                    url: '/system/role/delete/' + data.id,
+                                    method: 'delete',
+                                    success: function (res) {
+                                        table.reload('role');
+                                        layer.msg('已删除');
+                                        ;
+                                    },
+                                    error: function (res) {
+                                        console.log(res)
+                                    }
+                                });
+                                layer.close(index)
+                            });
+                            break;
+                        case 'edit':
+                            layui.data('role', {'key': 'role', 'value': data});
+                            layer.open({
+                                id: 'editRole',
+                                title: '修改角色',
+                                area: ['430px', '250px'],
+                                type: 2,
+                                content: "{% static 'module/system/role/roleEditForm.html' %}",
+                                btn: ['确定', '取消'],
+                                yes: function (index, layero) {
+                                    var iframeWindow = window['layui-layer-iframe' + index]
+                                        , submitID = 'role-edit'
+                                        , submit = layero.find('iframe').contents().find('#' + submitID);
+                                    //监听提交
+                                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                        var field = data.field; //获取提交的字段
+                                        console.log(data)
+                                        //提交 Ajax 成功后，静态更新表格中的数据
+                                        $.ajax({
+                                            url: '/system/role/update/' + field.id,
+                                            data: field,
+                                            method: 'put',
+                                            success: function (res) {
+                                                table.reload('role')
+                                                layui.layer.msg('修改成功')
+                                            },
+                                            error: function (res) {
+                                                layui.layer.msg(res.responseText)
+                                            }
+                                        });
+                                        layer.close(index); //关闭弹层
+                                    });
+                                    submit.trigger('click');
+                                }
+                            });
+                            break
+
+                        case 'bind':
+                            layui.data('role', {'key': 'role', 'value': data});
+                            layer.open({
+                                id: 'bindRole',
+                                title: '绑定用户',
+                                area: ['510px', '500px'],
+                                type: 2,
+                                content: "{% static 'module/system/role/roleBindForm.html' %}",
+                                btn: ['确定', '取消'],
+                                yes: function (index, layero) {
+                                    var iframeWindow = window['layui-layer-iframe' + index]
+                                        , submitID = 'role-bind'
+                                        , submit = layero.find('iframe').contents().find('#' + submitID);
+                                    //监听提交
+                                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (res) {
+                                        var users = iframeWindow.layui.transfer.getData('bindUser');
+                                        let ids = []
+                                        $(users).each(function (index, item){
+                                            ids.push(item.value)
+                                        });
+                                        //提交 Ajax 成功后，静态更新表格中的数据
+                                        $.ajax({
+                                            url: '/system/role/role_user/bind/' + data.id,
+                                            data: {'users': JSON.stringify(ids)},
+                                            method: 'put',
+                                            success: function (res) {
+                                                table.reload('role')
+                                                layui.layer.msg('修改成功')
+                                            },
+                                            error: function (res) {
+                                                layui.layer.msg(res.responseText)
+                                            }
+                                        });
+                                        layer.close(index); //关闭弹层
+                                    });
+                                    submit.trigger('click');
+                                }
+                            });
+                            break
+
+                        case 'auth':
+                            layui.data('role', {'key': 'role', 'value': data});
+                            layer.open({
+                                id: 'bindMenu',
+                                title: '授权',
+                                area: ['510px', '500px'],
+                                type: 2,
+                                content: "{% static 'module/system/role/roleBindMenuForm.html' %}",
+                                btn: ['确定', '取消'],
+                                yes: function (index, layero) {
+                                    var iframeWindow = window['layui-layer-iframe' + index]
+                                        , submitID = 'role-bind'
+                                        , submit = layero.find('iframe').contents().find('#' + submitID);
+                                    //监听提交
+                                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (res) {
+                                        var menus = iframeWindow.layui.tree.getChecked('bindMenu');
+                                        let ids = []
+                                        $(menus).each(function (index, item){
+                                            ids.push(item.id)
+                                        });
+                                        console.log(menus)
+                                        console.log(ids)
+                                        //提交 Ajax 成功后，静态更新表格中的数据
+                                        $.ajax({
+                                            url: '/system/role/role_menu/bind/' + data.id,
+                                            data: {'menus': JSON.stringify(menus)},
+                                            method: 'put',
+                                            success: function (res) {
+                                                table.reload('role')
+                                                layui.layer.msg('授权成功')
+                                            },
+                                            error: function (res) {
+                                                layui.layer.msg(res.responseText)
+                                            }
+                                        });
+                                        layer.close(index); //关闭弹层
+                                    });
+                                    submit.trigger('click');
+                                }
+                            });
+                            break
+                    }
+                });
+
+
+                //事件
+                var active = {
+                    add: function () {
+                        layer.open({
+                            type: 2
+                            , title: '添加角色'
+                            , content: '{% static 'module/system/role/roleAddForm.html' %}'
+                            , maxmin: true
+                            , area: ['470px', '250px']
+                            , btn: ['确定', '取消']
+                            , yes: function (index, layero) {
+                                var iframeWindow = window['layui-layer-iframe' + index]
+                                    , submitID = 'role-add'
+                                    , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                                //监听提交
+                                iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                    var field = data.field; //获取提交的字段
+
+                                    //提交 Ajax 成功后，静态更新表格中的数据
+                                    $.ajax({
+                                        url: '/system/role/add',
+                                        data: field,
+                                        method: 'post',
+                                        success: function (res) {
+                                            table.reload('role')
+                                            layui.layer.msg('添加成功')
+                                        },
+                                        error: function (res) {
+                                            layui.layer.msg(res.responseText)
+                                        }
+                                    });
+                                    layer.close(index); //关闭弹层
+                                });
+
+                                submit.trigger('click');
+                            }
+                        });
+                    }
+                };
+
+                $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+                    var type = $(this).data('type');
+                    active[type] ? active[type].call(this) : '';
+                });
+            }
+        );
+    </script>
+{% endblock %}

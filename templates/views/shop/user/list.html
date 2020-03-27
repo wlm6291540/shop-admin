@@ -1,0 +1,272 @@
+{% extends 'tpl/template.html' %}
+{% load static %}
+{% block main %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="user_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">公司名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="company_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">注册时间</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="reg_range" id="reg_range" placeholder="选择时间范围" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">认证状态</label>
+                        <div class="layui-input-block">
+                            <select name="auth_status">
+                                <option value="">不限</option>
+                                <option value=1>通过</option>
+                                <option value=0>失败</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+                                lay-filter="user-search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <!--<div style="padding-bottom: 10px;">
+                    <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+                </div>-->
+
+                <table id="user-manager" lay-filter="user-manager"></table>
+
+                <script type="text/html" id="toolbar">
+                    <a class="layui-btn layui-btn-xs" lay-event="view"><i
+                            class="layui-icon layui-icon-edit"></i>查看</a>
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
+                            class="layui-icon layui-icon-form"></i>编辑</a>
+                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="charge"><i
+                            class="layui-icon layui-icon-rmb"></i>充值</a>
+                </script>
+
+                <script type="text/html" id="topbar">
+                    <button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>
+                </script>
+
+                <script type="text/html" id="xuhao">
+                    {% verbatim %}
+                    {{ d.LAY_TABLE_INDEX+1}}
+                    {% endverbatim %}
+                </script>
+
+                <script type="text/html" id="authStyle">
+                    {% verbatim %}
+                    {{# if(d.auth_status === 0){ }}
+                    <span style="color:#FF5722">未认证或认证失败</span>
+                    {{# }else{ }}
+                    <span style="color:#5FB878">认证通过</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        layui.config({
+            base: '{% static 'layuiadmin/' %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table', 'laydate'], function () {
+            var $ = layui.$
+                , form = layui.form
+                , laydate = layui.laydate
+                , table = layui.table;
+
+            laydate.render({
+                elem: '#reg_range'
+                , range: true
+            });
+
+            table.render({
+                elem: "#user-manager",
+                url: '/user/list/list',
+                cols: [[
+                    {type: "checkbox", fixed: "left"},
+                    {title: "序号", width: 60, templet: '#xuhao'},
+                    {field: "user_id", title: "用户id",},
+                    {field: "user_name", title: "用户名",},
+                    {field: "company_name", title: "公司名",},
+                    {field: "user_money", title: "账户金额"},
+                    {field: "frozen_money", title: "冻结金额"},
+                    {field: "auth_status", title: "认证状态", templet: '#authStyle'},
+                    {field: "reg_time_format", title: "注册时间"},
+                    {
+                        title: "操作", width: 250, align: "center", fixed: "right", toolbar: "#toolbar"
+                    }]],
+                page: !0,
+                limit: 30,
+                toolbar: '#topbar',
+                defaultToolbar: ['filter', 'exports', 'print'],
+                height: "full-220",
+                text: "对不起，加载出现异常！"
+            });
+
+            function get_time(strtime){
+                let date = new Date(strtime.replace(/-/g, '/'));
+                return date.getTime() / 1000;
+            }
+            //监听搜索
+            form.on('submit(user-search)', function (data) {
+                let field = data.field;
+                let user_name = field.user_name;
+                let company_name = field.company_name;
+                let reg_range = field.reg_range
+                let auth_status = field.auth_status
+                let reg_time_max = null
+                let reg_time_min = null
+                if (reg_range){
+                    reg_time_min = get_time(reg_range.split(' - ')[0])
+                    reg_time_max = get_time(reg_range.split(' - ')[1])
+                }
+
+                //执行重载
+                table.reload('user-manager', {
+                    where: {user_name, company_name, auth_status, reg_time_min, reg_time_max}
+                });
+            });
+
+            //事件
+            table.on('toolbar(user-manager)', function (obj) {
+                if (obj.event === 'add') {
+                    layer.open({
+                        type: 2
+                        , title: '添加用户'
+                        , content: '{% static 'module/shop/user/userAddForm.html' %}'
+                        , maxmin: true
+                        , area: ['500px', '500px']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            var iframeWindow = window['layui-layer-iframe' + index]
+                                , submitID = 'LAY-user-front-submit'
+                                , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                            //监听提交
+                            iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                var field = data.field;
+                                $.ajax({
+                                    url: '/user/list/add',
+                                    data: field,
+                                    method: 'post',
+                                    success: function (res) {
+                                        table.reload('user-manager')
+                                        layui.layer.msg('创建成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                layer.close(index);
+                            });
+
+                            submit.trigger('click');
+                        }
+                    });
+                }
+            })
+
+            table.on("tool(user-manager)", function (obj) {
+                if ("edit" === obj.event) {
+                    layui.data('shop_user', {'key': 'user', 'value': obj.data})
+                    layer.open({
+                        type: 2,
+                        title: "编辑用户",
+                        content: "{% static 'module/shop/user/userEditForm.html' %}",
+                        maxmin: !0,
+                        area: ["500px", "400px"],
+                        btn: ["确定", "取消"],
+                        yes: function (e, t) {
+                            var l = window["layui-layer-iframe" + e], r = "LAY-user-front-submit",
+                                n = t.find("iframe").contents().find("#" + r);
+                            l.layui.form.on("submit(" + r + ")", function (t) {
+                                t.field;
+                                $.ajax({
+                                    url: '/user/list/update/' + obj.data.user_id,
+                                    data: t.field,
+                                    method: 'put',
+                                    success: function (res) {
+                                        table.reload('user-manage')
+                                        layui.layer.msg('修改成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                table.reload("user-manager"), layer.close(e)
+                            }), n.trigger("click")
+                        },
+                        success: function (e, t) {
+                        }
+                    })
+                } else if ("view" === obj.event) {
+                    layui.data('shop_user', {'key': 'user', 'value': obj.data})
+                    layer.open({
+                        type: 2,
+                        title: "查看用户",
+                        content: "{% static 'module/shop/user/userViewPage.html' %}",
+                        maxmin: !0,
+                        area: ["100%", "100%"],
+                        btn: ["关闭"],
+                    })
+                } else if ("charge" === obj.event) {
+                    layer.open({
+                        type: 2,
+                        title: "用户充值",
+                        content: "{% static 'module/shop/user/userChargeForm.html' %}",
+                        maxmin: !0,
+                        offset: ['100px'],
+                        area: ["500px", "180px"],
+                        btn: ["确定", "取消"],
+                        yes: function (e, t) {
+                            var l = window["layui-layer-iframe" + e], r = "LAY-user-front-submit",
+                                n = t.find("iframe").contents().find("#" + r);
+                            l.layui.form.on("submit(" + r + ")", function (t) {
+                                t.field;
+                                console.log(obj)
+                                $.ajax({
+                                    url: '/user/list/charge/' + obj.data.user_id,
+                                    data: t.field,
+                                    method: 'put',
+                                    success: function (res) {
+                                        table.reload('user-manage')
+                                        layui.layer.msg('修改成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                table.reload("user-manager"), layer.close(e)
+                            }), n.trigger("click")
+                        },
+                        success: function (e, t) {
+                        }
+                    })
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑用户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        .layui-form-item {
+            width: 820px;
+            text-align: center;
+            padding-left: calc(calc(100% - 820px) / 2)
+        }
+
+        .layui-form-item input {
+            border: none;
+            font-size: 14px;
+        }
+
+        .layui-form-item label {
+            font-size: 16px;
+        }
+
+        .layui-textarea {
+            height: 90px
+        }
+    </style>
+</head>
+<body>
+<div class="layui-card" style="text-align: center">
+    <div class="layui-card-header"><h2>用户信息</h2></div>
+    <div class="layui-card-body">
+        <form class="layui-form" lay-filter="user-info" style="text-align: center">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: #FF5722">* </span>用户ID: </label>
+                <div class="layui-input-block">
+                    <i><input type="text" name="user_id" readonly class="layui-input"></i>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名: </label>
+                <div class="layui-input-block">
+                    <input type="text" name="user_name" readonly class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">公司名: </label>
+                <div class="layui-input-block">
+                    <input type="text" name="company_name" readonly class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">账户金额: </label>
+                <div class="layui-input-inline">
+                    <b><input type="text" name="user_money" readonly class="layui-input"  style="color: #5FB878"></b>
+                </div>
+
+                <label class="layui-form-label">冻结金额: </label>
+                <div class="layui-input-inline">
+                   <b><input type="text" name="frozen_money" readonly class="layui-input" style="color: #5FB878"></b>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">注册时间: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="reg_time" readonly class="layui-input">
+                </div>
+
+                <label class="layui-form-label">认证状态: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="auth_status" readonly class="layui-input" style="color: #1E9FFF">
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">私钥: </label>
+                <div class="layui-input-block">
+                    <textarea name="private_key" readonly class="layui-textarea" style="height: 260px"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">公钥: </label>
+                <div class="layui-input-block">
+                    <textarea name="public_key" readonly class="layui-textarea"></textarea>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function () {
+        var $ = layui.$
+            , form = layui.form
+        let user = layui.data('shop_user').user;
+        form.val('user-info',{
+            user_id: user.user_id,
+            user_name: user.user_name,
+            company_name: user.company_name,
+            user_money: "￥" + user.user_money,
+            frozen_money: "￥" + user.frozen_money,
+            reg_time: user.reg_time_format,
+            auth_status: user.auth_status_desc,
+            public_key: user.public_key,
+            private_key: user.private_key,
+        })
+
+        if (user.auth_status === 1){
+            $('input[name=auth_status]').attr('style', 'color: #5FB878')
+        }else{
+            $('input[name=auth_status]').attr('style', 'color: #FF5722')
+        }
+    })
+</script>
+</body>
+</html>

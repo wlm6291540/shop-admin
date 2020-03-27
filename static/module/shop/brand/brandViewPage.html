@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>查看/编辑用户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        .layui-form-item {
+            width: 900px;
+            padding-left: calc(calc(100% - 900px) / 2)
+        }
+
+        .layui-form-item input {
+        / / border: none;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .layui-form-item label {
+            font-size: 16px;
+            width: 120px;
+        }
+
+        .layui-input-inline {
+            text-align: left;
+        }
+
+        .hidden {
+            width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-card">
+    <div class="layui-card-header"><h2>品牌信息</h2></div>
+    <div class="layui-card-body">
+        <form class="layui-form" lay-filter="brand-info" style="text-align: center">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span style="color: #FF5722">* </span>品牌ID: </label>
+                <div class="layui-input-inline">
+                    <i><input type="text" name="brand_id" readonly class="layui-input"></i>
+                </div>
+                <label class="layui-form-label">品牌名: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="brand_name" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">品牌英文名: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="brand_letter" class="layui-input">
+                </div>
+                <label class="layui-form-label">品牌首字母: </label>
+                <div class="layui-input-inline">
+                    <b><input type="text" name="brand_first_char" class="layui-input"
+                              style="color: #5FB878"></b>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">品牌LOGO: </label>
+                <div class="layui-input-inline" style="width: 600px">
+                    <button type="button" class="layui-btn layui-btn-primary" id="brand_logo">选择文件</button>
+                    <span id="brand_logo_desc" class="hidden"></span>
+                    <input type="hidden" name="brand_logo">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">首页图片: </label>
+                <div class="layui-input-inline layui-upload" id="test10" style="width: 600px">
+                    <button type="button" class="layui-btn layui-btn-primary" id="index_img">选择文件</button>
+                    <span id="index_img_desc" class="hidden"></span>
+                    <input type="hidden" name="index_img">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">品牌背景: </label>
+                <div class="layui-input-inline layui-upload" style="width: 600px; overflow: hidden">
+                    <button type="button" class="layui-btn layui-btn-primary" id="brand_bg">选择文件</button>
+                    <span id="brand_bg_desc" class="hidden"></span>
+                    <input type="hidden" name="brand_bg">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否显示: </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="is_show" value="1" title="是">
+                    <input type="radio" name="is_show" value="0" title="否">
+                </div>
+
+                <label class="layui-form-label">是否删除: </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="is_delete" value="1" title="是">
+                    <input type="radio" name="is_delete" value="0" title="否">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+
+                <label class="layui-form-label">排序: </label>
+                <div class="layui-input-inline">
+                    <input name="sort_order" class="layui-input">
+                </div>
+                <label class="layui-form-label">审核状态: </label>
+                <div class="layui-input-inline">
+                    <select type="text" name="status" class="layui-input">
+                        <option value="">请选择</option>
+                        <option value="0">未审核</option>
+                        <option value="1">已审核</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+
+                <label class="layui-form-label">创建时间: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="create_time" readonly class="layui-input">
+                </div>
+
+                <label class="layui-form-label">名字拼音: </label>
+                <div class="layui-input-inline">
+                    <b><input type="text" name="name_pinyin" class="layui-input"
+                              style="color: #5FB878"></b>
+                </div>
+
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">品牌描述: </label>
+                <div class="layui-input-block">
+                    <textarea name="brand_desc" class="layui-textarea"
+                              style="height: 160px; max-width: 700px"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="brand-update" id="brand-update" value="确认">
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function () {
+        var $ = layui.$
+            , upload = layui.upload
+            , form = layui.form
+        let brand = layui.data('brand').brand;
+        $('#brand_bg_desc').html(brand.brand_bg)
+        $('#index_img_desc').html(brand.index_img)
+        $('#brand_logo_desc').html(brand.brand_logo)
+        form.val('brand-info', {
+            brand_id: brand.brand_id,
+            brand_name: brand.brand_name,
+            brand_letter: brand.brand_letter,
+            brand_first_char: brand.brand_first_char,
+            brand_logo: brand.brand_logo,
+            index_img: brand.index_img,
+            brand_bg: brand.brand_bg,
+            brand_desc: brand.brand_desc,
+            sort_order: brand.sort_order,
+            is_show: brand.is_show,
+            is_delete: brand.is_delete,
+            status: brand.status,
+            create_time: brand.create_time.replace('T', ' '),
+            name_pinyin: brand.name_pinyin,
+        })
+
+
+        //选完文件后不自动上传
+        upload.render({
+            elem: '#brand_bg'
+            , url: '/upload' //改成您自己的上传接口
+            , done: function (res) {
+                $('input[name=brand_bg]').val(res.data.url)
+                $('#brand_bg_desc').html(res.data.url)
+                layer.msg('上传成功');
+            }
+        });
+
+        //选完文件后不自动上传
+        upload.render({
+            elem: '#index_img'
+            , url: '/upload' //改成您自己的上传接口
+            , done: function (res) {
+                $('input[name=index_img]').val(res.data.url)
+                $('#index_img_desc').html(res.data.url)
+                layer.msg('上传成功');
+            }
+        });
+
+        //选完文件后不自动上传
+        upload.render({
+            elem: '#brand_logo'
+            , url: '/upload' //改成您自己的上传接口
+            , done: function (res) {
+                $('input[name=brand_logo]').val(res.data.url)
+                $('#brand_logo_desc').html(res.data.url)
+                layer.msg('上传成功');
+            }
+        });
+    })
+</script>
+</body>
+</html>
