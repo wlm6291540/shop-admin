@@ -1,0 +1,274 @@
+{% extends 'tpl/template.html' %}
+{% load static %}
+{% block main %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">分类名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="cat_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">关键字</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="keywords" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">描述</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="cat_desc" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">是否显示</label>
+                        <div class="layui-input-block">
+                            <select name="is_show">
+                                <option value=""></option>
+                                <option value=1>是</option>
+                                <option value=0>否</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+                                lay-filter="cat-search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <!--<div style="padding-bottom: 10px;">
+                    <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+                </div>-->
+
+                <table id="category-manager" lay-filter="category-manager"></table>
+
+                <script type="text/html" id="toolbar">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit"><i
+                            class="layui-icon layui-icon-edit"></i>编辑</a>
+
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i
+                            class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+
+                <script type="text/html" id="topbar">
+                    <button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>
+                    <button class="layui-btn layui-btn-danger layuiadmin-btn-useradmin" lay-event="delete">删除</button>
+                </script>
+
+
+                <script type="text/html" id="showStyle">
+                    {% verbatim %}
+                    {{# if(d.is_show === 1){ }}
+                    <span style="color:#5FB878">是</span>
+                    {{# }else{ }}
+                    <span style="color:#FF5722">否</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+
+                <script type="text/html" id="deleteStyle">
+                    {% verbatim %}
+                    {{# if(d.is_delete === 0){ }}
+                    <span style="color:#5FB878">否</span>
+                    {{# }else{ }}
+                    <span style="color:#FF5722">是</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+
+                <script type="text/html" id="statusStyle">
+                    {% verbatim %}
+                    {{# if(d.status === 1){ }}
+                    <span style="color:#FF5722">已审核</span>
+                    {{# }else{ }}
+                    <span style="color:#5FB878">未审核</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+
+                <script type="text/html" id="xuhao">
+                    {% verbatim %}
+                    {{ d.LAY_TABLE_INDEX+1}}
+                    {% endverbatim %}
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        layui.config({
+            base: '{% static 'layuiadmin/' %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table', 'laydate'], function () {
+            var $ = layui.$
+                , form = layui.form
+                , laydate = layui.laydate
+                , table = layui.table;
+
+            laydate.render({
+                elem: '#reg_range'
+                , range: true
+            });
+            table.render({
+                elem: "#category-manager",
+                url: '/goods/category/list',
+                cols: [[
+                    {type: "checkbox", fixed: "left"},
+                    {title: '序号', sort: true, templet: '#xuhao', width: 90},
+                    {field: 'cat_name', 'title': '分类名', sort: true,},
+                    {field: 'keywords', 'title': '关键字', sort: true,},
+                    {field: 'cat_desc', 'title': '描述', sort: true,},
+                    {field: 'parent_name', 'title': '上级分类', sort: true,},
+                    {field: 'sort_order', 'title': '排序', sort: true,},
+                    {field: 'is_show', 'title': '是否显示', sort: true, templet: '#showStyle'},
+                    {field: 'style_icon', 'title': '样式图标', sort: true, hide: true},
+                    {field: 'cat_icon', 'title': '分类图标', sort: true, hide: true},
+                    {
+                        title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#toolbar"
+                    }]],
+                page: !0,
+                limit: 10,
+                toolbar: '#topbar',
+                defaultToolbar: ['filter', 'exports', 'print'],
+                //height: "full-220",
+                text: {
+                    none: '暂无相关数据'
+                }
+            });
+
+
+            //监听搜索
+            form.on('submit(cat-search)', function (data) {
+                let field = data.field;
+                let cat_name = field.cat_name;
+                let keywords = field.keywords;
+                let cat_desc = field.cat_desc;
+                let is_show = field.is_show;
+                //执行重载
+                table.reload('category-manager', {
+                    page: {curr: 1},
+                    where: {cat_name, keywords, is_show, cat_desc,}
+                });
+            });
+
+            function deleteBrand(ids) {
+                $.ajax({
+                    url: '/goods/brand/delete',
+                    data: {ids: JSON.stringify(ids)},
+                    method: 'post',
+                    success: function (res) {
+                        layer.msg(res.msg)
+                        table.reload('category-manager')
+                    }
+                })
+            }
+
+            //事件
+            table.on('toolbar(category-manager)', function (obj) {
+                console.log(obj.event)
+                if (obj.event === 'add') {
+                    layer.open({
+                        type: 2
+                        , title: '添加品牌'
+                        , content: '{% static 'module/shop/brand/brandAddForm.html' %}'
+                        , maxmin: true
+                        , area: ['100%', '100%']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            var iframeWindow = window['layui-layer-iframe' + index]
+                                , submitID = 'brand-add'
+                                , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                            //监听提交
+                            iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                var field = data.field;
+                                $.ajax({
+                                    url: '/goods/brand/add',
+                                    data: field,
+                                    method: 'post',
+                                    success: function (res) {
+                                        table.reload('category-manager')
+                                        layui.layer.msg('创建成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                layer.close(index);
+                            });
+
+                            submit.trigger('click');
+                        }
+                    });
+                } else if (obj.event === 'delete') {
+                    let checkStatus = table.checkStatus('category-manager');
+                    let data = checkStatus.data;
+                    let ids = []
+                    $(data).each(function (index, item) {
+                        ids.push(item.brand_id)
+                    })
+                    if (data.length <= 0) {
+                        layer.msg('未选择要删除的品牌')
+                    } else {
+                        deleteBrand(ids)
+                    }
+                }
+            })
+
+            table.on("tool(category-manager)", function (obj) {
+                if ("edit" === obj.event) {
+                    layui.data('cat', {'key': 'cat', 'value': obj.data})
+                    layer.open({
+                        type: 2,
+                        title: "品牌信息",
+                        content: "{% static 'module/shop/category/catViewPage.html' %}",
+                        maxmin: !0,
+                        area: ["100%", "100%"],
+                        btn: ['保存', "关闭"],
+                        yes: function (e, t) {
+                            var l = window["layui-layer-iframe" + e], r = "brand-update",
+                                n = t.find("iframe").contents().find("#" + r);
+                            l.layui.form.on("submit(" + r + ")", function (t) {
+                                console.log(t.field)
+                                t.field;
+                                $.ajax({
+                                    url: '/goods/brand/update/' + obj.data.brand_id,
+                                    data: t.field,
+                                    method: 'put',
+                                    success: function (res) {
+                                        table.reload('category-manager')
+                                        layui.layer.msg('修改成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                table.reload("category-manager"), layer.close(e)
+                            }), n.trigger("click")
+                        },
+                        success: function (e, t) {
+                        }
+                    })
+                } else if ("delete" === obj.event) {
+                    deleteBrand([obj.data.brand_id])
+                }
+            });
+        });
+    </script>
+{% endblock %}

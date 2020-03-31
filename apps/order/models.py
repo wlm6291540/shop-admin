@@ -3,9 +3,12 @@ from django.db import models
 
 # Create your models here.
 class OrderInfo(models.Model):
+    order_status_choice = ((-5, "拒绝退换货"), (-4, "申请换货"), (-3, "已申请退换货"), (-2, "同意换货"), (-1, "退款"), (0, "创建"),
+                    (1, "已支付"), (3, "配货中"), (4, "未发货"), (5, "已发货"), (6, "已收货"), (7, "已完成"), (8, "已取消"),
+                    (9, "订单已生效"), (10, "拆单完成"), (11, "海关审核中"))
     order_sn = models.CharField(unique=True, max_length=100)
     user_id = models.CharField(max_length=100, blank=True, null=True)
-    order_status = models.IntegerField(blank=True, null=True)
+    order_status = models.IntegerField(choices=order_status_choice, blank=True, null=True)
     consignee = models.CharField(max_length=60, blank=True, null=True)
     province = models.PositiveIntegerField(blank=True, null=True)
     city = models.PositiveIntegerField(blank=True, null=True)

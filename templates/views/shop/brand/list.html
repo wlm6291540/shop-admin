@@ -169,7 +169,9 @@
                 toolbar: '#topbar',
                 defaultToolbar: ['filter', 'exports', 'print'],
                 //height: "full-220",
-                text: "对不起，加载出现异常！"
+                text: {
+                    none: '暂无数据'
+                }
             });
 
 
@@ -190,6 +192,7 @@
                 }
                 //执行重载
                 table.reload('user-manager', {
+                    page: {curr: 1},
                     where: {brand_name, brand_letter, is_show, is_delete, status, create_time_after, create_time_before}
                 });
             });

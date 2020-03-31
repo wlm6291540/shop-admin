@@ -20,9 +20,11 @@ from django.urls import path, include
 from goods.urls import goods_urls
 from system.urls import system_urls
 from user.urls import user_urls
+from order.urls import order_urls
 
 urlpatterns = []
 
 urlpatterns.extend(system_urls)
 urlpatterns.extend(user_urls)
 urlpatterns.extend(goods_urls)
+urlpatterns.extend(order_urls)

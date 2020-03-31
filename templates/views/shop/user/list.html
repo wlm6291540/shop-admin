@@ -123,7 +123,9 @@
                 toolbar: '#topbar',
                 defaultToolbar: ['filter', 'exports', 'print'],
                 height: "full-220",
-                text: "对不起，加载出现异常！"
+                text: {
+                    none: '暂无相关数据'
+                }
             });
 
             function get_time(strtime){
@@ -146,6 +148,7 @@
 
                 //执行重载
                 table.reload('user-manager', {
+                    page: {curr: 1},
                     where: {user_name, company_name, auth_status, reg_time_min, reg_time_max}
                 });
             });

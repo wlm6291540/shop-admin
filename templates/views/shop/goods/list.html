@@ -1,0 +1,396 @@
+{% extends 'tpl/template.html' %}
+{% load static %}
+
+{% block css_style %}
+    .layui-table-cell {
+    height: auto;
+    text-overflow: inherit;
+    overflow: visible;
+    white-space: normal;
+    word-wrap: break-word;
+    }
+    .layui-table-cell-special {
+    height: auto;
+    text-overflow: inherit;
+    overflow: visible;
+    white-space: normal;
+    word-wrap: break-word;
+    }
+{% endblock %}
+{% block main %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">品牌名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="brand_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">分类名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="cat_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">商品名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="goods_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">销售价范围</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="shop_price_min" placeholder="￥" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="shop_price_max" placeholder="￥" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">平台</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="platform" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">产地</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="country_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">模式</label>
+                        <div class="layui-input-block" style="width: 156px">
+                            <select name="pattern">
+                                <option value="">不限</option>
+                                <option value=0>普通</option>
+                                <option value=1>保税</option>
+                                <option value=2>海外直邮</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">有效期</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="lifes" id="lifes" placeholder="选择时间范围" class="layui-input">
+                        </div>
+                    </div>
+
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">是否显示</label>
+                        <div class="layui-input-block" style="width: 90px">
+                            <select name="is_show">
+                                <option value="">不限</option>
+                                <option value=1>显示</option>
+                                <option value=0>不显示</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">删除状态</label>
+                        <div class="layui-input-block" style="width: 90px">
+                            <select name="is_delete">
+                                <option value="">不限</option>
+                                <option value=1>已删除</option>
+                                <option value=0>未删除</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">审核状态</label>
+                        <div class="layui-input-block" style="width: 90px">
+                            <select name="status">
+                                <option value="">不限</option>
+                                <option value=1>已审核</option>
+                                <option value=0>未审核</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+                                lay-filter="user-search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <!--<div style="padding-bottom: 10px;">
+                    <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+                </div>-->
+
+                <table id="user-manager" lay-filter="user-manager"></table>
+
+                <script type="text/html" id="toolbar">
+                    <a class="layui-btn layui-btn-xs" lay-event="view"><i
+                            class="layui-icon layui-icon-edit"></i>查看</a>
+
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i
+                            class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+
+                <script type="text/html" id="topbar">
+                    <button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>
+                </script>
+
+
+                <script type="text/html" id="postStyle">
+                    {% verbatim %}
+                    {{# if(d.is_freepost === 1){ }}
+                    <span style="color:#5FB878">是</span>
+                    {{# }else{ }}
+                    <span style="color:#FF5722">否</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+
+                <script type="text/html" id="showStyle">
+                    {% verbatim %}
+                    {{# if(d.is_show === 1){ }}
+                    <span style="color:#5FB878">是</span>
+                    {{# }else{ }}
+                    <span style="color:#FF5722">否</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+
+
+                <script type="text/html" id="deleteStyle">
+                    {% verbatim %}
+                    {{# if(d.is_delete === 0){ }}
+                    <span style="color:#5FB878">否</span>
+                    {{# }else{ }}
+                    <span style="color:#FF5722">是</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+
+                <script type="text/html" id="statusStyle">
+                    {% verbatim %}
+                    {{# if(d.status === 1){ }}
+                    <span style="color:#FF5722">已审核</span>
+                    {{# }else{ }}
+                    <span style="color:#5FB878">未审核</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        layui.config({
+            base: '{% static 'layuiadmin/' %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table', 'laydate'], function () {
+            var $ = layui.$
+                , form = layui.form
+                , laydate = layui.laydate
+                , table = layui.table;
+
+            laydate.render({
+                elem: '#reg_range'
+                , range: true
+            });
+            table.render({
+                elem: "#user-manager",
+                url: '/goods/list/list',
+                cols: [[
+                    //{type: "checkbox", fixed: "left"},
+                    {field: 'goods_id', title: 'ID', sort: true, width: 90},
+                    {field: 'cat_name', title: '分类', sort: true,},
+                    {field: 'brand_name', title: '品牌', sort: true,},
+                    {field: 'goods_name', title: '商品名', sort: true, width: 320},
+                    {field: 'goods_sn', title: '货号', sort: true, width: 160},
+                    {field: 'bar_code', title: '条形码', sort: true, hide: true},
+                    {field: 'goods_number', title: '数量', sort: true,},
+                    {field: 'is_freepost', title: '包邮', templet: '#postStyle', width: 60},
+                    {field: 'cost_price', title: '成本价', sort: true,},
+                    {field: 'shop_price', title: '售价', sort: true,},
+                    {field: 'warn_number', title: '库存报警数量', hide: true},
+                    {field: 'goods_desc', title: '描述', sort: true, hide: true},
+                    {field: 'desc_mobile', title: '手机', sort: true, hide: true},
+                    {field: 'goods_thumb', title: '缩略图', sort: true, hide: true},
+                    {field: 'is_on_sale', title: '是否在售', sort: true, hide: true},
+                    {field: 'is_delete', title: '是否删除', sort: true, hide: true},
+                    {field: 'status', title: '审核状态', hide: true},
+                    {field: 'goods_unit', title: '单位',},
+                    {field: 'pattern', title: '模式', sort: true, hide: true},
+                    {field: 'platform', title: '平台', sort: true, hide: true},
+                    {field: 'lifes', title: '有效期', sort: true,},
+                    {field: 'country_name', title: '产地', hide: true},
+                    {field: 'create_time', title: '创建时间', hide: true},
+
+                    {
+                        title: "操作", width: 200, align: "center", fixed: "right", toolbar: "#toolbar",
+                    }]],
+                page: !0,
+                limit: 10,
+                toolbar: '#topbar',
+                defaultToolbar: ['filter', 'exports', 'print'],
+                //height: "full-220",
+                text: {
+                    none: '暂无相关数据'
+                }
+            });
+
+
+            //监听搜索
+            form.on('submit(user-search)', function (data) {
+                let field = data.field;
+                let brand_name = field.brand_name;
+                let cat_name = field.cat_name;
+                let goods_name = field.goods_name;
+                let shop_price_min = field.shop_price_min;
+                let shop_price_max = field.shop_price_max;
+                let pattern = field.pattern;
+                let platform = field.platform;
+                let country_name = field.country_name;
+                let is_show = field.is_show;
+                let is_delete = field.is_delete;
+                let status = field.status;
+                let lifes = field.lifes;
+                let lifes_before = '';
+                let lifes_after = '';
+                if (lifes) {
+                    lifes_before = reg_range.split(' - ')[1]
+                    lifes_after = reg_range.split(' - ')[0]
+                }
+                //执行重载
+                table.reload('user-manager', {
+                    page: {curr: 1},
+                    where: {brand_name, cat_name, goods_name, shop_price_min, shop_price_max, pattern, platform,
+                        country_name, lifes_after, lifes_before, is_show, is_delete, status}
+                });
+            });
+
+            function deleteBrand(ids) {
+                $.ajax({
+                    url: '/goods/brand/delete',
+                    data: {ids: JSON.stringify(ids)},
+                    method: 'post',
+                    success: function (res) {
+                        layer.msg(res.msg)
+                        table.reload('user-manager')
+                    }
+                })
+            }
+
+            //事件
+            table.on('toolbar(user-manager)', function (obj) {
+                console.log(obj.event)
+                if (obj.event === 'add') {
+                    layer.open({
+                        type: 2
+                        , title: '添加品牌'
+                        , content: '{% static 'module/shop/brand/brandAddForm.html' %}'
+                        , maxmin: true
+                        , area: ['100%', '100%']
+                        , btn: ['确定', '取消']
+                        , yes: function (index, layero) {
+                            var iframeWindow = window['layui-layer-iframe' + index]
+                                , submitID = 'brand-add'
+                                , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                            //监听提交
+                            iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                                var field = data.field;
+                                $.ajax({
+                                    url: '/goods/brand/add',
+                                    data: field,
+                                    method: 'post',
+                                    success: function (res) {
+                                        table.reload('user-manager')
+                                        layui.layer.msg('创建成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                layer.close(index);
+                            });
+
+                            submit.trigger('click');
+                        }
+                    });
+                } else if (obj.event === 'delete') {
+                    let checkStatus = table.checkStatus('user-manager');
+                    let data = checkStatus.data;
+                    let ids = []
+                    $(data).each(function (index, item) {
+                        ids.push(item.brand_id)
+                    })
+                    if (data.length <= 0) {
+                        layer.msg('未选择要删除的品牌')
+                    } else {
+                        deleteBrand(ids)
+                    }
+                }
+            })
+
+            table.on("tool(user-manager)", function (obj) {
+                if ("view" === obj.event) {
+                    layui.data('brand', {'key': 'brand', 'value': obj.data})
+                    layer.open({
+                        type: 2,
+                        title: "品牌信息",
+                        content: "{% static 'module/shop/brand/brandViewPage.html' %}",
+                        maxmin: !0,
+                        area: ["100%", "100%"],
+                        btn: ['保存', "关闭"],
+                        yes: function (e, t) {
+                            var l = window["layui-layer-iframe" + e], r = "brand-update",
+                                n = t.find("iframe").contents().find("#" + r);
+                            l.layui.form.on("submit(" + r + ")", function (t) {
+                                console.log(t.field)
+                                t.field;
+                                $.ajax({
+                                    url: '/goods/brand/update/' + obj.data.brand_id,
+                                    data: t.field,
+                                    method: 'put',
+                                    success: function (res) {
+                                        table.reload('user-manager')
+                                        layui.layer.msg('修改成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });
+                                table.reload("user-manager"), layer.close(e)
+                            }), n.trigger("click")
+                        },
+                        success: function (e, t) {
+                        }
+                    })
+                } else if ("delete" === obj.event) {
+                    deleteBrand([obj.data.brand_id])
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends 'tpl/template.html' %}
+{% load static %}
+
+{% block css_style %}
+    .layui-table-cell {
+    height: auto;
+    text-overflow: inherit;
+    overflow: visible;
+    white-space: normal;
+    word-wrap: break-word;
+    }
+{% endblock %}
+
+{% block main %}
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">商品</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="goods_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="user_name" placeholder="请输入" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">创建日期</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="create_time" id="create_time" placeholder="选择时间范围"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">支付日期</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="pay_time" id="pay_time" placeholder="选择时间范围" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">订单状态</label>
+                        <div class="layui-input-block" style="width: 90px">
+                            <select name="order_status">
+                                <option value="">不限</option>
+                                <option value=-5>拒绝退换货</option>
+                                <option value=-4>申请换货</option>
+                                <option value=-3>已申请退换货</option>
+                                <option value=-2>同意换货</option>
+                                <option value=-1>退款</option>
+                                <option value=0>创建</option>
+                                <option value=1>已支付</option>
+                                <option value=3>配货中</option>
+                                <option value=4>未发货</option>
+                                <option value=5>已发货</option>
+                                <option value=6>已收货</option>
+                                <option value=7>已完成</option>
+                                <option value=8>已取消</option>
+                                <option value=9>订单已生效</option>
+                                <option value=10>拆单完成</option>
+                                <option value=11>海关审核中</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layuiadmin-btn-useradmin" lay-submit
+                                lay-filter="order-search">
+                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+                <div id="topbar"></div>
+                <table id="order-manager" lay-filter="order-manager"></table>
+
+                <script type="text/html" id="toolbar">
+                    <a class="layui-btn layui-btn-xs" lay-event="view"><i
+                            class="layui-icon layui-icon-read"></i>查看</a>
+                </script>
+
+                <script type="text/html" id="orderDetail">
+                    {% verbatim %}
+                    <p><span>订单状态:&nbsp;&nbsp;&nbsp;&nbsp;</span> <i>{{ d.order_status_name }}</i></p>
+                    <p><span>创建时间:&nbsp;&nbsp;&nbsp;&nbsp;</span> <i>{{ d.create_time.replace('T', ' ') }}</i></p>
+                    <p><span>下单时间:&nbsp;&nbsp;&nbsp;&nbsp;</span> <i>{{ d.pay_time ? d.paytime != null : '无'}}</i></p>
+                    {% endverbatim %}
+                </script>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        layui.config({
+            base: '{% static 'layuiadmin/' %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'table', 'laydate'], function () {
+            var $ = layui.$
+                , form = layui.form
+                , laydate = layui.laydate
+                , table = layui.table;
+
+            laydate.render({
+                elem: '#create_time'
+                , range: true
+            });
+            laydate.render({
+                elem: '#apy_time'
+                , range: true
+            });
+
+            table.render({
+                elem: "#order-manager",
+                url: '/order/list/list',
+                cols: [[
+                    {field: "order_sn", title: "订单号", sort: true},
+                    {field: "goods_name", title: "商品名", sort: true},
+                    {field: "order_amount", title: "应付金额", sort: true, width: 160},
+                    {field: "num", title: "数量", width: 60},
+                    {field: "life", title: "生产日期", sort: true, width: 120},
+                    {field: "user_name", title: "用户名", sort: true, width: 120},
+                    {field: "consignee", title: "收货人", sort: true, hide: true},
+                    {field: "province", title: "省份", sort: true, hide: true},
+                    {field: "city", title: "城市", sort: true, hide: true},
+                    {field: "district", title: "地区", sort: true, hide: true},
+                    {field: "address", title: "地址", sort: true, hide: true},
+                    {field: "mobile", title: "手机号", sort: true, hide: true},
+                    {field: "shipping_no", title: "物流单号", sort: true, hide: true},
+                    {field: "froms", title: "来源", hide: true, hide: true},
+                    {field: "rel_name", title: "姓名", sort: true, hide: true},
+                    {field: "id_num", title: "身份证", hide: true,},
+                    {field: "create_time", title: "创建时间", sort: true, width: 170, hide: true},
+                    {title: '订单信息', templet: '#orderDetail', width: 260},
+                    {
+                        title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#toolbar"
+                    }]],
+                page: !0,
+                limit: 10,
+                toolbar: '#topbar',
+                defaultToolbar: ['filter', 'exports', 'print'],
+                //height: "full-220",
+                text: {
+                    none: '暂无相关数据'
+                }
+            });
+
+
+            //监听搜索
+            form.on('submit(order-search)', function (data) {
+                console.log(data.field)
+                let field = data.field;
+                let goods_name = field.goods_name;
+                let user_name = field.user_name;
+                let create_time = field.create_time;
+                let pay_time = field.pay_time;
+                let order_status = field.order_status;
+                let create_time_before = ''
+                let create_time_after = ''
+                let pay_time_before = ''
+                let pay_time_after = ''
+                if (create_time) {
+                    create_time_before = create_time.split(' - ')[1]
+                    create_time_after = create_time.split(' - ')[0]
+                }
+                if (pay_time) {
+                    create_time_before = pay_time.split(' - ')[1]
+                    create_time_after = pay_time.split(' - ')[0]
+                }
+                //执行重载
+                table.reload(
+                    'order-manager', {
+                        page: {curr: 1},
+                        where: {
+                            goods_name,
+                            user_name,
+                            create_time_after,
+                            create_time_before,
+                            pay_time_after,
+                            pay_time_before,
+                            order_status
+                        }
+                    });
+            });
+
+
+            table.on("tool(order-manager)", function (obj) {
+                if ("view" === obj.event) {
+                    layui.data('order', {'key': 'order', 'value': obj.data})
+                    layer.open({
+                        type: 2,
+                        title: "订单信息",
+                        content: "{% static 'module/shop/order/orderViewPage.html' %}",
+                        maxmin: !0,
+                        area: ["100%", "100%"],
+                        btn: ["关闭"],
+                    })
+                }
+            });
+        });
+    </script>
+{% endblock %}
