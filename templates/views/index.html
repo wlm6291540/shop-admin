@@ -42,9 +42,15 @@
                             <i class="layui-icon layui-icon-screen-full"></i>
                         </a>
                     </li>
-                    <li class="layui-nav-item" lay-unselect>
+                    <li class="layui-nav-item" lay-unselect style="margin-right: 50px">
                         <a href="javascript:;">
-                            <cite id="username">{{ request.user.username }}</cite>
+                            <cite id="username">
+                                {% if request.user.nickname %}
+                                    {{ request.user.nickname }}
+                                {% else %}
+                                    {{ request.user.username }}
+                                {% endif %}
+                            </cite>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a lay-href="set/user/info.html">基本资料</a></dd>
@@ -53,14 +59,13 @@
                             <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
                         </dl>
                     </li>
-
-                    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                    <!--<li class="layui-nav-item layui-hide-xs" lay-unselect>
                         <a href="javascript:;" layadmin-event="about"><i
                                 class="layui-icon layui-icon-more-vertical"></i></a>
-                    </li>
-                    <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+                    </li>-->
+                    <!--<li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
                         <a href="javascript:;" layadmin-event="more"><i class="layui-icon layui-icon-more-vertical"></i></a>
-                    </li>
+                    </li>-->
                 </ul>
             </div>
 
@@ -89,8 +94,8 @@
                                         {% else %}
                                     <dd data-name="{{ menu2.id }}">
                                 {% endif %}
-                                    <a lay-href="{{ menu2.url }}"> {{ menu2.title }}</a>
-                                </dd>
+                            <a lay-href="{{ menu2.url }}"> {{ menu2.title }}</a>
+                            </dd>
                             {% endfor %}
                         </dl>
                         </li>
@@ -145,9 +150,6 @@
         }).use(['index', 'jquery'], function () {
             let $ = layui.jquery
                 , setter = layui.setter;
-            $('#username').html(layui.data(setter.tableName).username)
-
-
         });
     </script>
 {% endblock %}

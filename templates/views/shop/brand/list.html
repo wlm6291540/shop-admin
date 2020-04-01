@@ -78,13 +78,13 @@
                     <a class="layui-btn layui-btn-xs" lay-event="view"><i
                             class="layui-icon layui-icon-edit"></i>查看</a>
 
-                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i
-                            class="layui-icon layui-icon-delete"></i>删除</a>
+                    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i
+                            class="layui-icon layui-icon-delete"></i>删除</a>-->
                 </script>
 
                 <script type="text/html" id="topbar">
                     <button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>
-                    <button class="layui-btn layui-btn-danger layuiadmin-btn-useradmin" lay-event="delete">删除</button>
+                    <!--<button class="layui-btn layui-btn-danger layuiadmin-btn-useradmin" lay-event="delete">删除</button>-->
                 </script>
 
 
@@ -115,6 +115,12 @@
                     {{# }else{ }}
                     <span style="color:#5FB878">未审核</span>
                     {{# } }}
+                    {% endverbatim %}
+                </script>
+
+                <script type="text/html" id="timeStyle">
+                    {% verbatim %}
+                    {{ d.create_time != null ? d.create_time.replace('T', ' ')  : ' ' }}
                     {% endverbatim %}
                 </script>
             </div>
@@ -160,7 +166,7 @@
                     },
                     {field: "is_delete", title: "删除状态", width: 90, align: "center", templet: '#deleteStyle'},
                     {field: "status", title: "审核状态", width: 90, align: "center", templet: '#statusStyle'},
-                    {field: "create_time", title: "添加时间", sort: true},
+                    {field: "create_time", title: "添加时间", sort: true, templet: '#timeStyle'},
                     {
                         title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#toolbar"
                     }]],
@@ -197,13 +203,13 @@
                 });
             });
 
-            function deleteBrand(ids){
+            function deleteBrand(ids) {
                 $.ajax({
                     url: '/goods/brand/delete',
                     data: {ids: JSON.stringify(ids)},
                     method: 'post',
                     success: function (res) {
-                       layer.msg(res.msg)
+                        layer.msg(res.msg)
                         table.reload('user-manager')
                     }
                 })
@@ -246,16 +252,16 @@
                             submit.trigger('click');
                         }
                     });
-                }else if (obj.event === 'delete') {
+                } else if (obj.event === 'delete') {
                     let checkStatus = table.checkStatus('user-manager');
                     let data = checkStatus.data;
                     let ids = []
                     $(data).each(function (index, item) {
                         ids.push(item.brand_id)
                     })
-                    if (data.length <= 0){
+                    if (data.length <= 0) {
                         layer.msg('未选择要删除的品牌')
-                    }else {
+                    } else {
                         deleteBrand(ids)
                     }
                 }
@@ -275,7 +281,6 @@
                             var l = window["layui-layer-iframe" + e], r = "brand-update",
                                 n = t.find("iframe").contents().find("#" + r);
                             l.layui.form.on("submit(" + r + ")", function (t) {
-                                console.log(t.field)
                                 t.field;
                                 $.ajax({
                                     url: '/goods/brand/update/' + obj.data.brand_id,
@@ -295,7 +300,7 @@
                         success: function (e, t) {
                         }
                     })
-                }else if ("delete" === obj.event){
+                } else if ("delete" === obj.event) {
                     deleteBrand([obj.data.brand_id])
                 }
             });

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加分类</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/style.css" media="all">
+    <style>
+        .layui-form-item {
+            width: 600px;
+            padding-left: calc(calc(100% - 600px) / 2)
+        }
+
+
+        .must {
+            color: #FF5722;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-card">
+    <div class="layui-card-header"><h2 style="text-align: center">添加分类</h2></div>
+    <div class="layui-card-body">
+        <form class="layui-form" lay-filter="brand-info" style="text-align: center">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="must">* </span>分类名: </label>
+                <div class="layui-input-block">
+                    <input type="text" name="cat_name" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="must">* </span>上级分类: </label>
+                <div class="layui-input-block">
+                    <select name="parent_id" class="layui-select" lay-verify="required">
+                        <option value=0></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="must">* </span>关键字: </label>
+                <div class="layui-input-block">
+                    <input type="text" name="keywords" class="layui-input" style="color: #5FB878"
+                           lay-verify="required">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否显示: </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="is_show" value="1" title="是" checked>
+                    <input type="radio" name="is_show" value="0" title="否">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序: </label>
+                <div class="layui-input-block">
+                    <input name="sort_order" class="layui-input">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">分类拼音: </label>
+                <div class="layui-input-block">
+                    <b><input type="text" name="name_pinyin" class="layui-input"
+                              style="color: #5FB878"></b>
+                </div>
+
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">分类描述: </label>
+                <div class="layui-input-block">
+                    <textarea name="brand_desc" class="layui-textarea"
+                              style="height: 160px; max-width: 700px"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="brand-add" id="brand-add" value="确认">
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function () {
+        var $ = layui.$
+            , upload = layui.upload
+            , form = layui.form
+
+        function renderParent() {
+            $.ajax({
+                url: '/goods/category/parent',
+                method: 'get',
+                success: function (res) {
+                    let parent = $('select[name=parent_id]');
+                    $(res.data).each(function (index, item) {
+                        $(parent).append('<option value=' + item.cat_id + '>' + item.cat_name + '</option>')
+                        form.render('select');
+                    })
+                }
+            })
+        }
+
+        renderParent();
+
+        //选完文件后不自动上传
+        upload.render({
+            elem: '#brand_bg'
+            , url: '/upload' //改成您自己的上传接口
+            , done: function (res) {
+                $('input[name=brand_bg]').val(res.data.url)
+                $('#brand_bg_desc').html(res.data.url)
+                layer.msg('上传成功');
+            }
+        });
+
+        //选完文件后不自动上传
+        upload.render({
+            elem: '#index_img'
+            , url: '/upload' //改成您自己的上传接口
+            , done: function (res) {
+                $('input[name=index_img]').val(res.data.url)
+                $('#index_img_desc').html(res.data.url)
+                layer.msg('上传成功');
+            }
+        });
+
+
+        form.verify({
+            brand_name: function (value, item) { //value：表单的值、item：表单的DOM对象
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            },
+            brand_first_char: [
+                /^[a-zA-Z]{1}$/
+                , '必须为字母, 首字母长度不能超过1个'
+            ]
+        })
+        ;
+    })
+</script>
+</body>
+</html>

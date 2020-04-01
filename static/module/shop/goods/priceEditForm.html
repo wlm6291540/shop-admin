@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改价格</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/style.css" media="all">
+    <style>
+        .must {
+            color: #FF5722;
+        }
+
+        .layui-form-label {
+            width: 150px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-card">
+    <div class="layui-card-header"><h2 style="text-align: left">修改价格</h2></div>
+    <div class="layui-card-body">
+        <form class="layui-form" lay-filter="goods-price" style="text-align: center">
+            <div id="content">
+
+            </div>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="price-update" id="price-update" value="确认">
+            </div>
+            <input type="hidden" id="spec">
+        </form>
+
+    </div>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index', //主入口模块
+        treeSelect: 'lib/extend/treeSelect'
+    }).use(['treeSelect', 'index', 'laydate', 'layedit', 'form', 'upload'], function () {
+        var $ = layui.$
+            , form = layui.form;
+
+        let goods = layui.data("goods").goods;
+
+        form.val('goods-price', {
+            goods_name: goods.goods_name
+        })
+        let spec = JSON.parse(goods.spec);
+        let content = $('#content');
+        $(spec).each(function (index, item) {
+            $(content).append('<div class="layui-form-item"> <label class="layui-form-label"">描述: ' + item.specValue + '</label>\n' +
+                '<label class="layui-form-label">数量: ' + item.num + ' </label>\n' +
+                '<label class="layui-form-label">价格: </label>\n' +
+                '<div class="layui-input-block" >\n' +
+                '<input type="text" class="layui-input" name="price" id="'+ item.num +'" lay-verify="money|required" value="' + item.price + '" style="width: 200px">\n' +
+                '</div></div>');
+
+        });
+
+        $('#price-update').click(function () {
+            $('input[name=price]').each(function (index, item) {
+                $(spec).each(function (index, sp) {
+                    if(item.id == sp.num){
+                       sp.price = item.value
+                    }
+                })
+            })
+            $.ajax({
+                url: '/goods/list/price_update/' + goods.goods_id,
+                method: 'put',
+                data: {'spec': JSON.stringify(spec)},
+                success: function (res) {
+                    parent.layui.layer('修改成功');
+                }
+            })
+
+        })
+
+
+        form.verify({
+            money: [
+                /(^[1-9]*)$|(^[1-9]+[0-9]*)$|(^[0]+\.[0-9]{1,2})$|^[1-9]+[0-9]*\.[0-9]{1,2}$/
+                , '金额必须为数字, 个位数不能超过2位, 必须大于等于0'
+            ]
+        });
+    })
+</script>
+</body>
+</html>

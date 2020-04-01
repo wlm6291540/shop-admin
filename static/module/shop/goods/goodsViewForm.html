@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改商品</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/style.css" media="all">
+    <style>
+        .layui-form-item {
+            width: 80%;
+            padding-left: 10%;
+        }
+
+        .must {
+            color: #FF5722;
+        }
+
+        .layui-input {
+            border: none
+        }
+
+    </style>
+</head>
+<body>
+<div class="layui-card">
+    <div class="layui-card-header"><h2 style="text-align: center">修改商品</h2></div>
+    <div class="layui-card-body">
+        <form class="layui-form" lay-filter="goods-info" >
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属分类: </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="cat_name" name="cat_name" class="layui-input" style="text-align: left" readonly>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属品牌: </label>
+                <div class="layui-input-inline">
+                    <!--<select name="brand_id" id="brand_id" class="layui-select" lay-verify="required" lay-search readonly>
+                        <option value=0></option>
+                    </select>-->
+                    <input type="text" id="brand_name" name="brand_name" class="layui-input" style="text-align: left" readonly>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品名: </label>
+                <div class="layui-input-block" >
+                    <input type="text" name="goods_name" class="layui-input" lay-verify="required" readonly>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品序列码: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="goods_sn" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+                <label class="layui-form-label">条形码: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="bar_code" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">成本价: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="cost_price" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+                <label class="layui-form-label">售价: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="shop_price" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+
+                <label class="layui-form-label">商品数量: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="goods_number" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+
+                <label class="layui-form-label">库存报警数量: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="warn_number" class="layui-input" readonly>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否上架: </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="is_on_sale" value="1" title="是" checked>
+                    <input type="radio" name="is_on_sale" value="0" title="否">
+                </div>
+
+                <label class="layui-form-label">是否放入回收站: </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="is_delete" value="1" title="是" checked>
+                    <input type="radio" name="is_delete" value="0" title="否">
+                </div>
+
+                <label class="layui-form-label">审核状态: </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="status" value="1" title="已审核" checked>
+                    <input type="radio" name="status" value="0" title="未审核">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否包邮: </label>
+                <div class="layui-input-inline" >
+                    <input type="radio" name="is_freepost" value="1" title="是" checked>
+                    <input type="radio" name="is_freepost" value="0" title="否">
+                </div>
+
+                <label class="layui-form-label">模式: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="pattern" class="layui-input">
+                    <!--<select name="pattern" style="border-color: #D2D2D2 !important;">
+                        <option value=0>普通</option>
+                        <option value=1>保税</option>
+                        <option value=2>海外直邮</option>
+                    </select>-->
+
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">单位: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="goods_unit" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+
+                <label class="layui-form-label">平台: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="platform" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+
+                <label class="layui-form-label">生产国家: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="country_name" class="layui-input"
+                           lay-verify="required" readonly>
+                </div>
+
+                <label class="layui-form-label">生产日期: </label>
+                <div class="layui-input-inline">
+                    <input type="text" name="lifes" id="lifes" class="layui-input" disabled>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品描述: </label>
+                <div class="layui-input-block">
+                    <textarea id="goods_desc" name="goods_desc" style="display: none;" readonly></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品描述(移动端): </label>
+                <div class="layui-input-block">
+                    <textarea id="desc_mobile" name="desc_mobile" class="layui-textarea" readonly></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="goods-update" id="goods-update" value="确认">
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script src="../../../layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index', //主入口模块
+        treeSelect: 'lib/extend/treeSelect'
+    }).use(['treeSelect', 'index',  'laydate', 'layedit', 'form', 'upload'], function () {
+        var $ = layui.$
+            , treeSelect = layui.treeSelect
+            , upload = layui.upload
+            , form = layui.form
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+
+        let goods = layui.data("goods").goods;
+        //日期渲染
+        laydate.render({
+            elem: '#lifes',
+            type: 'month'
+        });
+
+        /**
+         * //富文本编辑器
+        layedit.set({
+            uploadImage: {
+                url: '/upload'
+                , type: 'post'
+            }
+        });*/
+        layedit.build('goods_desc', {height: 400,  tool: []});
+        layedit.build('desc_mobile', {height: 400,  tool: []});
+
+        /**
+        // 分类下拉树
+        treeSelect.render({
+            // 选择器
+            elem: '#cat_id',
+            // 数据
+            data: '/goods/category/tree',
+            // 请求头
+            headers: {},
+            // 异步加载方式：get/post，默认get
+            type: 'get',
+            // 占位符
+            placeholder: goods.cat_name ? goods.cat_name : '请选择',
+            //手风琴
+            accordion: true,
+            //无连线
+            showLine: true,
+            height: '360px',
+            // 点击回调
+            click: function (d) {
+                //console.log(d);
+            },
+            // 加载完成后的回调函数
+            success: function (d) {
+                if(goods.cat_id != null)
+                    $('#cat_id').val(goods.cat_id);
+                form.render('select')
+            }
+        });
+
+        function renderBrand() {
+            $.ajax({
+                url: '/goods/brand/all_list',
+                method: 'get',
+                success: function (res) {
+                    let brand = $('#brand_id');
+                    $(res).each(function (index, item) {
+                        if (item.brand_id == goods.brand_id)
+                            $(brand).append('<option value=' + item.brand_id + ' selected >' + item.brand_name + '</option>')
+                        else
+                            $(brand).append('<option value=' + item.brand_id + '>' + item.brand_name + '</option>')
+                    })
+                    form.render('select')
+                }
+            })
+        }
+
+        renderBrand();*/
+        let pattern = '普通';
+        if (goods.pattern == 1){
+            pattern == '保税'
+        } else if (goods.pattern == 2){
+            pattern == '海外直邮'
+        }
+
+        form.val('goods-info', {
+            brand_name: goods.brand_name,
+            cat_name: goods.cat_name,
+            goods_name: goods.goods_name,
+            goods_sn: goods.goods_sn,
+            bar_code: goods.bar_code,
+            cost_price: goods.cost_price,
+            shop_price: goods.shop_price,
+            goods_number: goods.goods_number,
+            warn_number: goods.warn_number,
+            is_on_sale: goods.is_on_sale,
+            is_delete: goods.is_delete,
+            status: goods.status,
+            is_freepost: goods.is_freepost,
+            pattern: pattern,
+            goods_unit: goods.goods_unit,
+            country_name: goods.country_name,
+            lifes: goods.lifes,
+            platform: goods.platform,
+            goods_desc: goods.goods_desc,
+            desc_mobile: goods.desc_mobile,
+        })
+
+        /**form.verify({
+            brand_name: function (value, item) { //value：表单的值、item：表单的DOM对象
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            },
+            brand_first_char: [
+                /^[a-zA-Z]{1}$/
+                , '必须为字母, 首字母长度不能超过1个'
+            ]
+        })
+        ;*/
+    })
+</script>
+</body>
+</html>

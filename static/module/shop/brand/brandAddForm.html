@@ -8,6 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/style.css" media="all">
     <style>
         .layui-form-item {
             width: 900px;
@@ -168,8 +169,8 @@
             elem: '#brand_bg'
             , url: '/upload' //改成您自己的上传接口
             , done: function (res) {
-                $('input[name=brand_bg]').val(res.data.url)
-                $('#brand_bg_desc').html(res.data.url)
+                $('input[name=brand_bg]').val(res.data.src)
+                $('#brand_bg_desc').html(res.data.src)
                 layer.msg('上传成功');
             }
         });
@@ -179,8 +180,8 @@
             elem: '#index_img'
             , url: '/upload' //改成您自己的上传接口
             , done: function (res) {
-                $('input[name=index_img]').val(res.data.url)
-                $('#index_img_desc').html(res.data.url)
+                $('input[name=index_img]').val(res.data.src)
+                $('#index_img_desc').html(res.data.src)
                 layer.msg('上传成功');
             }
         });
@@ -190,8 +191,8 @@
             elem: '#brand_logo'
             , url: '/upload' //改成您自己的上传接口
             , done: function (res) {
-                $('input[name=brand_logo]').val(res.data.url)
-                $('#brand_logo_desc').html(res.data.url)
+                $('input[name=brand_logo]').val(res.data.src)
+                $('#brand_logo_desc').html(res.data.src)
                 layer.msg('上传成功');
             }
         });

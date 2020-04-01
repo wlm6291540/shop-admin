@@ -141,58 +141,45 @@
                     <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
                 </div>-->
 
-                <table id="user-manager" lay-filter="user-manager"></table>
+                <table id="goods-manager" lay-filter="goods-manager"></table>
 
                 <script type="text/html" id="toolbar">
-                    <a class="layui-btn layui-btn-xs" lay-event="view"><i
-                            class="layui-icon layui-icon-edit"></i>查看</a>
-
-                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i
-                            class="layui-icon layui-icon-delete"></i>删除</a>
+                    <div class="layui-table-cell">
+                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="view"><i
+                                class="layui-icon layui-icon-form"></i>查看</a>
+                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="modifyPrice"><i
+                                class="layui-icon layui-icon-edit"></i>调价</a>
+                    </div>
+                    <div class="layui-table-cell">
+                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="putOn"><i
+                                class="layui-icon layui-icon-addition"></i>上架</a>
+                        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="pullOff"><i
+                                class="layui-icon layui-icon-subtraction"></i>下架</a>
+                    </div>
                 </script>
 
                 <script type="text/html" id="topbar">
-                    <button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>
+                    <!--<button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>-->
                 </script>
 
 
                 <script type="text/html" id="postStyle">
                     {% verbatim %}
                     {{# if(d.is_freepost === 1){ }}
+                    <span>是</span>
+                    {{# }else{ }}
+                    <span>否</span>
+                    {{# } }}
+                    {% endverbatim %}
+                </script>
+
+
+                <script type="text/html" id="saleStyle">
+                    {% verbatim %}
+                    {{# if(d.is_on_sale === 1){ }}
                     <span style="color:#5FB878">是</span>
                     {{# }else{ }}
                     <span style="color:#FF5722">否</span>
-                    {{# } }}
-                    {% endverbatim %}
-                </script>
-
-                <script type="text/html" id="showStyle">
-                    {% verbatim %}
-                    {{# if(d.is_show === 1){ }}
-                    <span style="color:#5FB878">是</span>
-                    {{# }else{ }}
-                    <span style="color:#FF5722">否</span>
-                    {{# } }}
-                    {% endverbatim %}
-                </script>
-
-
-                <script type="text/html" id="deleteStyle">
-                    {% verbatim %}
-                    {{# if(d.is_delete === 0){ }}
-                    <span style="color:#5FB878">否</span>
-                    {{# }else{ }}
-                    <span style="color:#FF5722">是</span>
-                    {{# } }}
-                    {% endverbatim %}
-                </script>
-
-                <script type="text/html" id="statusStyle">
-                    {% verbatim %}
-                    {{# if(d.status === 1){ }}
-                    <span style="color:#FF5722">已审核</span>
-                    {{# }else{ }}
-                    <span style="color:#5FB878">未审核</span>
                     {{# } }}
                     {% endverbatim %}
                 </script>
@@ -214,11 +201,11 @@
                 , table = layui.table;
 
             laydate.render({
-                elem: '#reg_range'
+                elem: '#lifes'
                 , range: true
             });
             table.render({
-                elem: "#user-manager",
+                elem: "#goods-manager",
                 url: '/goods/list/list',
                 cols: [[
                     //{type: "checkbox", fixed: "left"},
@@ -229,14 +216,14 @@
                     {field: 'goods_sn', title: '货号', sort: true, width: 160},
                     {field: 'bar_code', title: '条形码', sort: true, hide: true},
                     {field: 'goods_number', title: '数量', sort: true,},
-                    {field: 'is_freepost', title: '包邮', templet: '#postStyle', width: 60},
-                    {field: 'cost_price', title: '成本价', sort: true,},
-                    {field: 'shop_price', title: '售价', sort: true,},
                     {field: 'warn_number', title: '库存报警数量', hide: true},
+                    {field: 'cost_price', title: '成本价', sort: true,},
+                    {field: 'shop_price', title: '单价', sort: true,},
+                    {field: 'is_freepost', title: '包邮', templet: '#postStyle', width: 60},
                     {field: 'goods_desc', title: '描述', sort: true, hide: true},
                     {field: 'desc_mobile', title: '手机', sort: true, hide: true},
                     {field: 'goods_thumb', title: '缩略图', sort: true, hide: true},
-                    {field: 'is_on_sale', title: '是否在售', sort: true, hide: true},
+                    {field: 'is_on_sale', title: '是否在售', sort: true, hide: false, templet: '#saleStyle', width: 102},
                     {field: 'is_delete', title: '是否删除', sort: true, hide: true},
                     {field: 'status', title: '审核状态', hide: true},
                     {field: 'goods_unit', title: '单位',},
@@ -247,13 +234,13 @@
                     {field: 'create_time', title: '创建时间', hide: true},
 
                     {
-                        title: "操作", width: 200, align: "center", fixed: "right", toolbar: "#toolbar",
+                        title: "操作", width: 180, align: "center", fixed: "right", toolbar: "#toolbar",
                     }]],
                 page: !0,
                 limit: 10,
                 toolbar: '#topbar',
                 defaultToolbar: ['filter', 'exports', 'print'],
-                //height: "full-220",
+                //height: "full-20",
                 text: {
                     none: '暂无相关数据'
                 }
@@ -278,37 +265,27 @@
                 let lifes_before = '';
                 let lifes_after = '';
                 if (lifes) {
-                    lifes_before = reg_range.split(' - ')[1]
-                    lifes_after = reg_range.split(' - ')[0]
+                    lifes_before = lifes.split(' - ')[1]
+                    lifes_after = lifes.split(' - ')[0]
                 }
                 //执行重载
-                table.reload('user-manager', {
+                table.reload('goods-manager', {
                     page: {curr: 1},
-                    where: {brand_name, cat_name, goods_name, shop_price_min, shop_price_max, pattern, platform,
-                        country_name, lifes_after, lifes_before, is_show, is_delete, status}
+                    where: {
+                        brand_name, cat_name, goods_name, shop_price_min, shop_price_max, pattern, platform,
+                        country_name, lifes_after, lifes_before, is_show, is_delete, status
+                    }
                 });
             });
 
-            function deleteBrand(ids) {
-                $.ajax({
-                    url: '/goods/brand/delete',
-                    data: {ids: JSON.stringify(ids)},
-                    method: 'post',
-                    success: function (res) {
-                        layer.msg(res.msg)
-                        table.reload('user-manager')
-                    }
-                })
-            }
-
             //事件
-            table.on('toolbar(user-manager)', function (obj) {
+            table.on('toolbar(goods-manager)', function (obj) {
                 console.log(obj.event)
                 if (obj.event === 'add') {
                     layer.open({
                         type: 2
                         , title: '添加品牌'
-                        , content: '{% static 'module/shop/brand/brandAddForm.html' %}'
+                        , content: '{% static 'module/shop/goods/goodsAddForm.html' %}'
                         , maxmin: true
                         , area: ['100%', '100%']
                         , btn: ['确定', '取消']
@@ -325,7 +302,7 @@
                                     data: field,
                                     method: 'post',
                                     success: function (res) {
-                                        table.reload('user-manager')
+                                        table.reload('goods-manager')
                                         layui.layer.msg('创建成功')
                                     },
                                     error: function (res) {
@@ -338,8 +315,8 @@
                             submit.trigger('click');
                         }
                     });
-                } else if (obj.event === 'delete') {
-                    let checkStatus = table.checkStatus('user-manager');
+                } /**else if (obj.event === 'delete') {
+                    let checkStatus = table.checkStatus('goods-manager');
                     let data = checkStatus.data;
                     let ids = []
                     $(data).each(function (index, item) {
@@ -350,45 +327,110 @@
                     } else {
                         deleteBrand(ids)
                     }
-                }
+                }*/
             })
 
-            table.on("tool(user-manager)", function (obj) {
+            function onSale(id, is_on_sale) {
+                $.ajax({
+                    url: '/goods/list/on_sale/' + id,
+                    method: 'put',
+                    data: {'is_on_sale': is_on_sale},
+                    success: function (res) {
+                        if (is_on_sale == 1)
+                            layer.msg('上架成功')
+                        else if (is_on_sale == 0)
+                            layer.msg('下架成功')
+                        table.reload('goods-manager');
+                    },
+                    error: function () {
+                        if (is_on_sale == 1)
+                            layer.msg('上架失败')
+                        else if (is_on_sale == 0)
+                            layer.msg('下架失败')
+                    }
+                })
+            }
+
+            table.on("tool(goods-manager)", function (obj) {
                 if ("view" === obj.event) {
-                    layui.data('brand', {'key': 'brand', 'value': obj.data})
+                    layui.data('goods', {'key': 'goods', 'value': obj.data})
                     layer.open({
                         type: 2,
                         title: "品牌信息",
-                        content: "{% static 'module/shop/brand/brandViewPage.html' %}",
+                        content: "{% static 'module/shop/goods/goodsViewForm.html' %}",
                         maxmin: !0,
                         area: ["100%", "100%"],
-                        btn: ['保存', "关闭"],
-                        yes: function (e, t) {
-                            var l = window["layui-layer-iframe" + e], r = "brand-update",
+                        btn: ["关闭"],
+                        /**yes: function (e, t) {
+                            var l = window["layui-layer-iframe" + e], r = "goods-update",
                                 n = t.find("iframe").contents().find("#" + r);
                             l.layui.form.on("submit(" + r + ")", function (t) {
                                 console.log(t.field)
                                 t.field;
                                 $.ajax({
-                                    url: '/goods/brand/update/' + obj.data.brand_id,
+                                    url: '/goods/list/update/' + obj.data.goods_id,
                                     data: t.field,
                                     method: 'put',
                                     success: function (res) {
-                                        table.reload('user-manager')
+                                        table.reload('goods-manager')
                                         layui.layer.msg('修改成功')
                                     },
                                     error: function (res) {
                                         layui.layer.msg(res.responseText)
                                     }
                                 });
-                                table.reload("user-manager"), layer.close(e)
+                                table.reload("goods-manager"), layer.close(e)
+                            }), n.trigger("click")
+                        },
+                         success: function (e, t) {
+                        }*/
+                    })
+                } else if ("putOn" === obj.event) {
+                    if (obj.data.is_on_sale == 1) {
+                        layer.msg('已上架, 无需重复上架')
+                    } else {
+                        let goods_id = obj.data.goods_id;
+                        onSale(goods_id, 1)
+                    }
+                } else if ("pullOff" === obj.event) {
+                    if (obj.data.is_on_sale == 0) {
+                        layer.msg('已下架, 无需重复下架')
+                    } else {
+                        let goods_id = obj.data.goods_id;
+                        onSale(goods_id, 0)
+                    }
+                } else if ("modifyPrice" === obj.event) {
+                    layui.data('goods', {'key': 'goods', 'value': obj.data})
+                    layer.open({
+                        type: 2,
+                        title: "修改价格",
+                        content: "{% static 'module/shop/goods/priceEditForm.html' %}",
+                        maxmin: !0,
+                        area: ["100%", "100%"],
+                        btn: ["提交", "关闭"],
+                        yes: function (e, t) {
+                            var l = window["layui-layer-iframe" + e], r = "price-update",
+                                n = t.find("iframe").contents().find("#" + r);
+                            l.layui.form.on("submit(" + r + ")", function (t) {
+                                /**$.ajax({
+                                    url: '/goods/list/update/' + obj.data.goods_id,
+                                    data: t.field,
+                                    method: 'put',
+                                    success: function (res) {
+                                        table.reload('goods-manager')
+                                        layui.layer.msg('修改成功')
+                                    },
+                                    error: function (res) {
+                                        layui.layer.msg(res.responseText)
+                                    }
+                                });*/
+                                table.reload("goods-manager"), layer.close(e)
                             }), n.trigger("click")
                         },
                         success: function (e, t) {
                         }
+
                     })
-                } else if ("delete" === obj.event) {
-                    deleteBrand([obj.data.brand_id])
                 }
             });
         });

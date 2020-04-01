@@ -70,7 +70,8 @@ class ImageUploadView(View):
                 os.makedirs(path_name)
             with open(path_name + image.name, 'w') as file:
                 image.save(file)
-            data = {'url': settings.MEDIA_URL + 'shop/brand/' + image.name}
+            host = request.META['HTTP_HOST']
+            data = {'src': 'http://' + host + settings.MEDIA_URL + 'shop/brand/' + image.name}
         except Exception as e:
             code = 1
             msg = '系统内部错误'

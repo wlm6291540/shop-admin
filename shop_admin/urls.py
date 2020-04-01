@@ -15,14 +15,18 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.conf.urls import url
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.static import serve
 
 from goods.urls import goods_urls
+from shop_admin import settings
 from system.urls import system_urls
 from user.urls import user_urls
 from order.urls import order_urls
 
-urlpatterns = []
+urlpatterns = [
+    re_path(r'media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
 
 urlpatterns.extend(system_urls)
 urlpatterns.extend(user_urls)

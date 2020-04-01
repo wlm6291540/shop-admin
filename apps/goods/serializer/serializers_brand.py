@@ -14,6 +14,12 @@ class GoodsBrandListSerializer(serializers.ModelSerializer):
                   'name_pinyin']
 
 
+class GoodsBrandAllListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoodsBrand
+        fields = ['brand_id', 'brand_name']
+
+
 class GoodsBrandAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoodsBrand

@@ -27,6 +27,12 @@ class GoodBrandListView(generics.ListAPIView):
     filter_class = GoodsBrandFilter
 
 
+class GoodBrandAllListView(generics.ListAPIView):
+    queryset = GoodsBrand.objects.all()
+    serializer_class = GoodsBrandAllListSerializer
+    pagination_class = None
+
+
 class GoodBrandChangeView(generics.UpdateAPIView):
     queryset = GoodsBrand.objects.all()
     serializer_class = GoodsBrandUpdateSerializer

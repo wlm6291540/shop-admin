@@ -59,13 +59,13 @@
                     <a class="layui-btn layui-btn-xs" lay-event="edit"><i
                             class="layui-icon layui-icon-edit"></i>编辑</a>
 
-                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i
-                            class="layui-icon layui-icon-delete"></i>删除</a>
+                    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete"><i
+                            class="layui-icon layui-icon-delete"></i>删除</a>-->
                 </script>
 
                 <script type="text/html" id="topbar">
-                    <button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>
-                    <button class="layui-btn layui-btn-danger layuiadmin-btn-useradmin" lay-event="delete">删除</button>
+                    <!--<button class="layui-btn layuiadmin-btn-useradmin" lay-event="add">添加</button>
+                    <button class="layui-btn layui-btn-danger layuiadmin-btn-useradmin" lay-event="delete">删除</button>-->
                 </script>
 
 
@@ -167,9 +167,9 @@
                 });
             });
 
-            function deleteBrand(ids) {
+            function deleteCategory(ids) {
                 $.ajax({
-                    url: '/goods/brand/delete',
+                    url: '/goods/category/delete',
                     data: {ids: JSON.stringify(ids)},
                     method: 'post',
                     success: function (res) {
@@ -186,7 +186,7 @@
                     layer.open({
                         type: 2
                         , title: '添加品牌'
-                        , content: '{% static 'module/shop/brand/brandAddForm.html' %}'
+                        , content: '{% static 'module/shop/category/catAddForm.html' %}'
                         , maxmin: true
                         , area: ['100%', '100%']
                         , btn: ['确定', '取消']
@@ -199,7 +199,7 @@
                             iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
                                 var field = data.field;
                                 $.ajax({
-                                    url: '/goods/brand/add',
+                                    url: '/goods/category/add',
                                     data: field,
                                     method: 'post',
                                     success: function (res) {
@@ -226,7 +226,7 @@
                     if (data.length <= 0) {
                         layer.msg('未选择要删除的品牌')
                     } else {
-                        deleteBrand(ids)
+                        deleteCategory(ids)
                     }
                 }
             })
@@ -245,10 +245,9 @@
                             var l = window["layui-layer-iframe" + e], r = "brand-update",
                                 n = t.find("iframe").contents().find("#" + r);
                             l.layui.form.on("submit(" + r + ")", function (t) {
-                                console.log(t.field)
                                 t.field;
                                 $.ajax({
-                                    url: '/goods/brand/update/' + obj.data.brand_id,
+                                    url: '/goods/category/update/' + obj.data.cat_id,
                                     data: t.field,
                                     method: 'put',
                                     success: function (res) {
@@ -266,7 +265,7 @@
                         }
                     })
                 } else if ("delete" === obj.event) {
-                    deleteBrand([obj.data.brand_id])
+                    deleteCategory([obj.data.cat_id])
                 }
             });
         });

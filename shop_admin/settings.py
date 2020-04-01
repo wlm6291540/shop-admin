@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'shop_admin.middleware.PermissionMiddleWare'
+    'shop_admin.middleware.PermissionMiddleWare'
 ]
 
 ROOT_URLCONF = 'shop_admin.urls'

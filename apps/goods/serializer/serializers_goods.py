@@ -21,11 +21,29 @@ class GoodsListSerializer(serializers.ModelSerializer):
         except Exception as e:
             return None
 
-
-
     class Meta:
         model = Goods
         fields = ['goods_id', 'cat_id', 'cat_name', 'goods_sn', 'bar_code', 'goods_name', 'brand_id', 'brand_name',
-                  'goods_number', 'is_freepost', 'cost_price', 'shop_price', 'warn_number', 'desc_mobile',
+                  'goods_number', 'is_freepost', 'cost_price', 'shop_price', 'warn_number', 'goods_desc', 'desc_mobile',
                   'goods_thumb', 'is_on_sale', 'is_delete', 'status', 'pinyin_keyword', 'goods_unit', 'pattern',
-                  'platform', 'source_code', 'lifes', 'country_name', 'create_time']
+                  'platform', 'source_code', 'lifes', 'country_name', 'spec', 'create_time']
+
+
+class GoodsOnSaleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Goods
+        fields = ['is_on_sale']
+
+
+class GoodsUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Goods
+        fields = ['cat_id', 'goods_sn', 'bar_code', 'goods_name', 'brand_id', 'goods_number', 'is_freepost',
+                  'cost_price', 'shop_price', 'warn_number', 'goods_desc', 'desc_mobile', 'is_on_sale', 'is_delete',
+                  'status', 'goods_unit', 'pattern', 'platform', 'lifes', 'country_name']
+
+
+class GoodsPriceUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Goods
+        fields = ['spec']
