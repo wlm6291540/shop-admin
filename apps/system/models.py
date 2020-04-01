@@ -30,6 +30,7 @@ class Role(models.Model):
 
 class User(AbstractUser):
     username = models.CharField(max_length=32, null=False, blank=False, unique=True, verbose_name='用户名')
+    nickname = models.CharField(max_length=32, null=True, blank=True, unique=True, verbose_name='昵称')
     password = models.CharField(max_length=255, null=False, blank=False, verbose_name='密码')
     email = models.CharField(max_length=64, null=True, blank=True, verbose_name='邮箱')
     phone = models.CharField(max_length=11, null=True, blank=True, verbose_name='手机')

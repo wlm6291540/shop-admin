@@ -10,7 +10,7 @@ from system.views.views_permission import PermPageView
 from system.views.views_role import (RolePageView, RoleListView, RoleAddView, RoleDeleteView, RoleChangeView,
                                      RoleBindView, RoleUserView, RoleMenuView, RoleMenuBindView)
 from system.views.views_user import (LoginView, UserPageView, UserListView, UserAddView, UserChangeView,
-                                     UserActiveView, LogoutView)
+                                     UserActiveView, LogoutView, UserSetPageView)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -47,6 +47,7 @@ system_urls = [
 
     # user
     path('system/user/view', UserPageView.as_view(), name='user page'),
+    path('system/user/set/view', UserSetPageView.as_view(), name='user set page'),
     path('system/user/list', UserListView.as_view(), name='user list'),
     path('system/user/add', UserAddView.as_view(), name='user add'),
     # path('system/menu/delete/<int:pk>', MenuDeleteView.as_view(), name='menu delete'),

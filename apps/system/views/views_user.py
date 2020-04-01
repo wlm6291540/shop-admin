@@ -16,38 +16,12 @@ from system.serializers.serializers_user import UserSerializer, UserUpdateSerial
 User = get_user_model()
 
 
-# class CustomAuthToken(ObtainAuthToken):
-#
-#     def post(self, request, *args, **kwargs):
-#         try:
-#             serializer = self.serializer_class(data=request.data,
-#                                                context={'request': request})
-#             serializer.is_valid(raise_exception=True)
-#             user = serializer.validated_data['user']
-#             token, created = Token.objects.get_or_create(user=user)
-#             request.user = user
-#             if token:
-#                 code = 0
-#                 msg = '登录成功'
-#             else:
-#                 code = 1
-#                 msg = '登录失败'
-#         except Exception as e:
-#             code = 1
-#             msg = str(e)
-#         return Response({
-#             'code': code,
-#             'msg': msg,
-#             'data':{
-#                 'token': token.key,
-#                 'username': user.username,
-#                 'user_id': user.id,
-#             }
-#         })
-
-
 class UserPageView(TemplateView):
     template_name = 'views/user/user/list.html'
+
+
+class UserSetPageView(TemplateView):
+    template_name = 'views/set/user/info.html'
 
 
 class LoginView(View):
@@ -86,7 +60,7 @@ class UserAddView(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class UserChangeView(View):
+class UserChangeView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
 
