@@ -406,24 +406,12 @@
                         title: "修改价格",
                         content: "{% static 'module/shop/goods/priceEditForm.html' %}",
                         maxmin: !0,
-                        area: ["100%", "100%"],
+                        area: ["60%", "60%"],
                         btn: ["提交", "关闭"],
                         yes: function (e, t) {
                             var l = window["layui-layer-iframe" + e], r = "price-update",
                                 n = t.find("iframe").contents().find("#" + r);
                             l.layui.form.on("submit(" + r + ")", function (t) {
-                                /**$.ajax({
-                                    url: '/goods/list/update/' + obj.data.goods_id,
-                                    data: t.field,
-                                    method: 'put',
-                                    success: function (res) {
-                                        table.reload('goods-manager')
-                                        layui.layer.msg('修改成功')
-                                    },
-                                    error: function (res) {
-                                        layui.layer.msg(res.responseText)
-                                    }
-                                });*/
                                 table.reload("goods-manager"), layer.close(e)
                             }), n.trigger("click")
                         },

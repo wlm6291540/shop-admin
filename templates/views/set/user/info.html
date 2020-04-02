@@ -69,8 +69,8 @@
                         <div class="layui-form-item layui-form-text">
                             <label class="layui-form-label">备注</label>
                             <div class="layui-input-block">
-                                <textarea name="desc" id="desc"
-                                          placeholder="请输入内容" class="layui-textarea"></textarea>
+                                <textarea name="desc" id="desc" placeholder="请输入内容"
+                                          class="layui-textarea">{{ request.user.desc | default_if_none:'' }}</textarea>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -79,7 +79,8 @@
                                 <button type="reset" class="layui-btn layui-btn-primary">重新填写</button>
                             </div>
                         </div>
-                    </div>
+                    </
+                    >
 
                 </div>
             </div>
@@ -97,15 +98,13 @@
         let $ = layui.jquery,
             form = layui.form;
 
-        $('#desc').value = {{ request.user.desc | default_if_none:'' }};
-
         form.on('submit(setmyinfo)', function (t) {
             $.ajax({
                 url: '/system/user/update/' + $('#id').val(),
                 method: 'put',
                 data: t.field,
                 success: function (res) {
-                    layer.msg('修改成功')
+                    layui.layer.msg('修改成功')
                 }
             })
         })

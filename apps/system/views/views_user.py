@@ -1,17 +1,15 @@
-from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth import get_user_model, authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.hashers import make_password
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
-from rest_framework import viewsets, serializers, generics, status
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
+from rest_framework import generics, status
 from rest_framework.response import Response
 
 from system.pagination.paginator import CustomPagination
 from system.serializers.serializers_user import UserSerializer, UserUpdateSerializer, UserAddSerializer, \
-    UserActiveSerializer
+    UserActiveSerializer, UserPasswordUpdateSerializer
 
 User = get_user_model()
 
@@ -22,6 +20,10 @@ class UserPageView(TemplateView):
 
 class UserSetPageView(TemplateView):
     template_name = 'views/set/user/info.html'
+
+
+class UserPasswordPageView(TemplateView):
+    template_name = 'views/set/user/password.html'
 
 
 class LoginView(View):
@@ -63,6 +65,34 @@ class UserAddView(generics.CreateAPIView):
 class UserChangeView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
+
+
+class UserPasswordChangeView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserPasswordUpdateSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        old_password = request.data.get('old_password', None)
+        password = request.data.get('password', None)
+        re_password = request.data.get('re_password', None)
+        if not request.user.check_password(old_password):
+            return Response(dict(msg='当前密码错误'), status=400)
+        elif password is not None and password != re_password:
+            return Response(dict(msg="两次输入的密码不一致"), status=400)
+        else:
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            serializer.validated_data['password'] = make_password(password)
+            self.perform_update(serializer)
+            user = User.objects.get(id=request.user.id)
+            update_session_auth_hash(request, user)
+
+            if getattr(instance, '_prefetched_objects_cache', None):
+                instance._prefetched_objects_cache = {}
+
+            return Response(dict(msg='修改成功'), status=200)
 
 
 class UserActiveView(generics.UpdateAPIView):
